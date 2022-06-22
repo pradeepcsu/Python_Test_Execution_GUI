@@ -16,13 +16,14 @@ if sys.version_info[0] < 3:
     from enum import Enum
 else:
     import tkinter as tk
+    from enum import Enum
+    from tkinter import ttk
 
 from robot import pythonpathsetter
 from robot import rebot
 from robot import run
-
 # from lib.py import common
-from lib.py.gui import center
+#from lib.gui import center
 
 try:
     from robot.testdoc import TestSuiteFactory
@@ -176,7 +177,7 @@ class RunnerGui(tk.Tk):
     def initialize(self):
         self.title('Run Tests')
 
-        center(self, 1000, 700)
+        #center(self, 1000, 700)
 
         root = tk.PanedWindow(self, orient=tk.HORIZONTAL, sashpad=4, sashrelief=tk.RAISED)
 
