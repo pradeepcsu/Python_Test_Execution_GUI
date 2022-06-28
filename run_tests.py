@@ -6,16 +6,11 @@ import os
 import shutil
 import subprocess
 import sys
-if sys.version_info[0] < 3:
-    import Tkinter as tk
-    import tkFileDialog
-    import tkMessageBox
-    # import tkinter.messagebox
-    import ttk
-    # from concurrent.futures import ProcessPoolExecutor, as_completed
-    from enum import Enum
-else:
-    import tkinter as tk
+
+import tkinter as tk
+from tkinter import ttk
+from tkinter import filedialog
+from enum import Enum
 
 from robot import pythonpathsetter
 from robot import rebot
@@ -32,7 +27,6 @@ except ImportError as e:
 
 
 # todo  include suite or test name in results folder
-
 
 regions = ['QA', 'UAT2', 'DEV2', 'BAU']
 default_pythonpath = os.path.join(os.getcwd(), 'lib')
@@ -109,17 +103,23 @@ class Runner(object):
         for browser in self.browsers:
             lbl = self.suite if self.suite else self.test
             fldr = '--'.join([self.aut.lower(), lbl.lower(), browser.value, datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')])
-            cmd = 'pybot.bat'
+            # cmd = 'pybot.bat'
+            cmd = 'robot'
             cmd += ' --variable browser:"{}"'.format(browser.value)
             cmd += ' --variable region:"{}"'.format(self.region)
             if self.on_remote:
                 cmd += ' --variable remote_url:http://90tvmcjnkd:4444/wd/hub'
-            if self.include:
-                cmd += ' --include "{}"'.format(self.include)
-            if self.exclude:
-                cmd += ' --exclude "{}"'.format(self.exclude)
-            if self.test:
+          
+            if self.include and self.exclude:
+                  cmd += ' --include "{}"'.format(self.include) +  ' --exclude "{}"'.format(self.exclude)
+            elif self.include:
+                 cmd += ' --include "{}"'.format(self.include)
+            elif self.exclude:
+                 cmd += ' --exclude "{}"'.format(self.exclude)
+            else:
                 cmd += ' --test "{}"'.format(self.test)
+            
+
             if self.suite:
                 cmd += ' --suite "{}"'.format(self.suite)
             cmd += ' --outputdir "{}"'.format(os.path.join(self.outputdir, fldr))
@@ -361,7 +361,7 @@ class RunnerGui(tk.Tk):
             self.run_btn.config(state='disabled')
 
     def set_output_dir(self, event=None):
-        filename = tkFileDialog.askdirectory()
+        filename = filedialog.askdirectory()
         if not filename:
             return
         self.output_dir_sv.set(filename)
